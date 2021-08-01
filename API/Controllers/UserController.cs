@@ -1,14 +1,13 @@
-using System.Collections.Generic;
+
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Model;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-       [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
           private UserService _userService;
         public UserController(UserService userService)
@@ -20,6 +19,12 @@ namespace API.Controllers
          public async  Task<ActionResult<User>> GetUsers()
         {
             return  await _userService.Get();
+        }
+
+        [HttpPost("register")]
+         public async  Task<ActionResult<User>> Register(RegisterDto payload)
+        {
+            return  await _userService.Register(payload);
         }
     }
 }

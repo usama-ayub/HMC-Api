@@ -17,9 +17,12 @@ namespace API.Model
         public string ContactNumber { get; set; }
         [BsonElement]
         public string Email { get; set; }
-        // [BsonElement]
-        public string Password { get; set; }
         [BsonElement]
+        public byte[] PasswordHash { get; set; }
+        [BsonElement]
+        public byte[] PasswordSalt { get; set; }
+        [BsonElement]
+
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         [BsonElement]

@@ -1,9 +1,12 @@
 ﻿
+using API.DTOs;
 using API.Model;
 using API.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace API.Services
@@ -15,8 +18,6 @@ namespace API.Services
         private readonly IDBConnection dbconnection;
         public UserService(DataBaseSetting settings, IConfiguration configuration, IDBConnection _dbconnection)
         {
-            /*var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);*/
             dbconnection = _dbconnection;
             _user = dbconnection.DataBase.GetCollection<User>(settings.UserCollectionName);
             // this.key = configuration.GetSection("JwtKey").ToString();
@@ -24,10 +25,40 @@ namespace API.Services
 
 
 
-        public async Task<User> Get(){
-        var user = await _user.Find(user => true).FirstOrDefaultAsync();
-          return user;
+        public async Task<User> Get()
+        {
+            var user = await _user.Find(user => true).FirstOrDefaultAsync();
+            return user;
         }
+        public async Task<ActionResult<User>> Register(RegisterDto payload)
+        {
+            using var hmac = new HMACSHA512();
+            if(await UserExit(payload.UserName)){
+                
+            }
+            var user = new User();
+            user.UserName = payload.UserName.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload.Password));
+            user.PasswordSalt = hmac.Key;
+            user.Email = payload.Email;
+            await _user.InsertOneAsync(user);
+            return user;
+        }
+
+        private async Task<bool> UserExit(string username)
+        {
+            var user = (await _user.FindAsync(user => user.UserName == username)).FirstOrDefault();
+            if (user == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+        }
+
 
 
 
