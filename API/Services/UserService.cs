@@ -14,11 +14,15 @@ namespace API.Services
     public class UserService
     {
         private readonly IMongoCollection<User> _user;
-        private readonly string key;
-        private readonly IDBConnection dbconnection;
-        public UserService(DataBaseSetting settings, IConfiguration configuration, IDBConnection _dbconnection)
+       private readonly ITokenService _tokenService;
+        public UserService(
+            DataBaseSetting settings,
+            IConfiguration configuration,
+            IDBConnection dbconnection,
+            ITokenService tokenService
+            )
         {
-            dbconnection = _dbconnection;
+            _tokenService = tokenService;
             _user = dbconnection.DataBase.GetCollection<User>(settings.UserCollectionName);
             // this.key = configuration.GetSection("JwtKey").ToString();
         }
@@ -30,11 +34,12 @@ namespace API.Services
             var user = await _user.Find(user => true).FirstOrDefaultAsync();
             return user;
         }
-        public async Task<ActionResult<User>> Register(RegisterDto payload)
+        public async Task<ActionResult<ResponseRegister>> Register(RegisterDto payload)
         {
             using var hmac = new HMACSHA512();
-            if(await UserExit(payload.UserName)){
-                
+            if (await UserExit(payload.UserName))
+            {
+
             }
             var user = new User();
             user.UserName = payload.UserName.ToLower();
@@ -42,7 +47,34 @@ namespace API.Services
             user.PasswordSalt = hmac.Key;
             user.Email = payload.Email;
             await _user.InsertOneAsync(user);
-            return user;
+            return new ResponseRegister
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
+        }
+
+        public async Task<ActionResult<ResponseLogin>> Login(LoginDto payload)
+        {
+            var user = (await _user.FindAsync(user => user.Email == payload.Email)).FirstOrDefault();
+            if (user == null)
+            {
+
+            }
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload.Password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != user.PasswordHash[i])
+                {
+
+                }
+            }
+            return new ResponseLogin
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
         }
 
         private async Task<bool> UserExit(string username)
