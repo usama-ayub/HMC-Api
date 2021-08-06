@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -17,7 +18,7 @@ namespace API.Model
         [BsonElement]
          public string Price { get; set; }
         [BsonElement]
-         public string Tags { get; set; }
+         public List<String> Tags { get; set; }
         [BsonElement]
         public MongoDBRef CountryId { get; set; }
         [BsonElement]
