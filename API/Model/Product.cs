@@ -5,34 +5,32 @@ using MongoDB.Driver;
 
 namespace API.Model
 {
-    public class User
+    public class Product
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         [BsonElement]
-        public string UserName { get; set; }
+        public string Name { get; set; }
         [BsonElement]
-        public MongoDBRef RoleId { get; set; }
+         public string Description { get; set; }
         [BsonElement]
-        public MongoDBRef ConformId { get; set; }
+         public string Price { get; set; }
         [BsonElement]
-        public string Adress { get; set; }
+         public string Tags { get; set; }
         [BsonElement]
-        public string ContactNumber { get; set; }
+        public MongoDBRef CountryId { get; set; }
         [BsonElement]
-        public string Email { get; set; }
+         public MongoDBRef CityId { get; set; }
         [BsonElement]
-        public byte[] PasswordHash { get; set; }
+         public MongoDBRef CategoryId { get; set; }
         [BsonElement]
-        public byte[] PasswordSalt { get; set; }
+         public MongoDBRef UserId { get; set; }
+        [BsonElement]
+        public bool Active { get; set; }
         [BsonElement]
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         [BsonElement]
         public DateTime ModifiedOn { get; set; } = DateTime.Now;
-        [BsonElement]
-        public DateTime LastActive { get; set; } = DateTime.Now;
-        [BsonElement]
-        public Boolean IsActive { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace API.Shared
                  new Claim(JwtRegisteredClaimNames.Email,user.Email),
                  new Claim(JwtRegisteredClaimNames.Name,user.UserName),
                  new Claim("id",user.Id),
-                 new Claim("active",user.IsActive.ToString()),
+                 new Claim("roleId",user.RoleId.ToString()),
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor
