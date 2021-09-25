@@ -13,6 +13,8 @@ namespace API.Model
         [BsonElement]
         public MongoDBRef ProductId { get; set; }
         [BsonElement]
+        public string PublicId { get; set; }
+        [BsonElement]
         public string Url { get; set; }
         [BsonElement]
         public bool Main { get; set; }

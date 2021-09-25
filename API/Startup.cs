@@ -35,9 +35,11 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<DataBaseSetting>(Configuration.GetSection(nameof(DataBaseSetting)));
+            services.Configure<CloudinarySetting>(Configuration.GetSection(nameof(CloudinarySetting)));
             services.AddSingleton<DataBaseSetting>(x => x.GetRequiredService<IOptions<DataBaseSetting>>().Value);
             services.AddSingleton<IDBConnection, DBConnection>();
             services.AddSingleton<ITokenService, TokenService>();
+            services.AddSingleton<IMediaService, MediaService>();
             services.AddControllers();
             services.AddCors();
             services.AddScoped<UserService>();

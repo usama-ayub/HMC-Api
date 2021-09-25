@@ -42,5 +42,17 @@ namespace API.Middleware
                 await context.Response.WriteAsync(json);
             }
         }
+
+        // private IApiException ApiException(int statusCode, string message = null, string details = null)
+        // {
+        //    return {StatusCode: statusCode, Message: message, Details: details}
+        // }
+
+        public interface IApiException
+        {
+            int StatusCode { get; set; }
+            string Message { get; set; }
+            string Details { get; set; }
+        }
     }
 }
