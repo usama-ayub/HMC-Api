@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using API.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -43,16 +42,19 @@ namespace API.Middleware
             }
         }
 
-        // private IApiException ApiException(int statusCode, string message = null, string details = null)
-        // {
-        //    return {StatusCode: statusCode, Message: message, Details: details}
-        // }
 
-        public interface IApiException
+        public class ApiException
         {
-            int StatusCode { get; set; }
-            string Message { get; set; }
-            string Details { get; set; }
+         public ApiException(int statusCode, string message = null, string details = null)
+        {
+            StatusCode = statusCode;
+            Message = message;
+            Details = details;
+        }
+            public int StatusCode { get; set; }
+            public string Message { get; set; }
+            public string Details { get; set; }
+
         }
     }
 }
