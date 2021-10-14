@@ -1,7 +1,7 @@
 
+using System.Net;
 using System.Threading.Tasks;
 using API.DTOs;
-using API.Model;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,28 +10,42 @@ namespace API.Controllers
 {
     public class UserController : BaseApiController
     {
-          private UserService _userService;
+        private UserService _userService;
         public UserController(UserService userService)
         {
             _userService = userService;
         }
-        
+
         [Authorize]
         [HttpGet]
-         public async  Task<ActionResult<User>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            return  await _userService.Get();
+            var result = await _userService.Get();
+            if (result.status){
+                return BaseResponse(result.user, HttpStatusCode.OK,"Found");
+            }
+            return BaseResponse("", HttpStatusCode.NotFound,"Not Found", false, true);
         }
 
         [HttpPost("register")]
-         public async  Task<ActionResult<ResponseRegister>> Register(RegisterDto payload)
+        public async Task<IActionResult> Register(RegisterDto payload)
         {
-            return  await _userService.Register(payload);
+            var result = await _userService.Register(payload);
+            if (result.status)
+            {
+                return BaseResponse(result.register, HttpStatusCode.OK,"Register Sucessfully", false, true);
+            }
+            return BaseResponse("", HttpStatusCode.NotFound, "User Already Exist");
         }
         [HttpPost("login")]
-         public async  Task<ActionResult<ResponseLogin>> Login(LoginDto payload)
+        public async Task<IActionResult> Login(LoginDto payload)
         {
-            return  await _userService.Login(payload);
+            var result = await _userService.Login(payload);
+            if (result.status)
+            {
+                return BaseResponse(result.login, HttpStatusCode.OK, result.message);
+            }
+            return BaseResponse("", HttpStatusCode.NotFound, result.message, false, true);
         }
 
     }
